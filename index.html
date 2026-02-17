@@ -6,27 +6,34 @@
   <title>Thailand 2026 — Trip Planner</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --gold: #d4a745;
-      --gold-light: #f5e6b8;
-      --teal: #1a8a7d;
-      --teal-dark: #136b61;
-      --coral: #e07a5f;
-      --coral-dark: #c4623f;
-      --navy: #1b2a4a;
-      --navy-light: #2d3f63;
-      --cream: #fdf8f0;
-      --sand: #f5efe3;
-      --text: #2c2c2c;
+      /* REI-inspired earthy palette */
+      --forest: #1a3c34;
+      --forest-mid: #2d5a3f;
+      --green: #3a7d5c;
+      --green-light: #5a9e78;
+      --sage: #8fbc8f;
+      --sage-light: #d4e8d0;
+      --cream: #faf7f2;
+      --warm-white: #f5f1ea;
+      --sand: #e8e0d4;
+      --tan: #c9a96e;
+      --tan-light: #e6d5a8;
+      --charcoal: #1a1a1a;
+      --charcoal-mid: #333333;
+      --text: #2b2b2b;
       --text-light: #6b6b6b;
-      --travel-bg: #e8edf5;
-      --travel-accent: #4a6fa5;
-      --beach-bg: #e6f5f0;
-      --beach-accent: #1a8a7d;
-      --loop-bg: #fef0eb;
-      --loop-accent: #e07a5f;
+      --white: #ffffff;
+
+      /* Phase colors — earthy tones */
+      --travel-bg: #eae6df;
+      --travel-accent: #7a6f5d;
+      --beach-bg: #dbeee3;
+      --beach-accent: #3a7d5c;
+      --loop-bg: #f0e6d8;
+      --loop-accent: #b5752d;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -43,24 +50,24 @@
     /* ── Navigation ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      background: rgba(27, 42, 74, 0.95);
+      background: rgba(26, 60, 52, 0.97);
       backdrop-filter: blur(10px);
       padding: 0.75rem 1.5rem;
       display: flex; justify-content: center; gap: 1.5rem;
     }
     nav a {
-      color: var(--gold-light); text-decoration: none; font-size: 0.85rem;
+      color: var(--sage-light); text-decoration: none; font-size: 0.85rem;
       font-weight: 500; letter-spacing: 0.03em; transition: color 0.2s;
     }
-    nav a:hover { color: var(--gold); }
+    nav a:hover { color: var(--tan-light); }
 
     /* ── Hero ── */
     .hero {
       position: relative;
       min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 40%, var(--teal-dark) 100%);
-      color: #fff;
+      background: linear-gradient(160deg, var(--forest) 0%, #1e4a3a 40%, var(--forest-mid) 100%);
+      color: var(--white);
       text-align: center;
       padding: 5rem 1.5rem 3rem;
       overflow: hidden;
@@ -69,56 +76,115 @@
       content: '';
       position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse at 20% 80%, rgba(212, 167, 69, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(26, 138, 125, 0.2) 0%, transparent 50%);
+        radial-gradient(ellipse at 20% 80%, rgba(201, 169, 110, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(90, 158, 120, 0.12) 0%, transparent 50%);
     }
-    .hero-content { position: relative; max-width: 700px; }
-    .hero-flag {
-      font-size: 2.5rem; margin-bottom: 0.5rem;
-    }
+    .hero-content { position: relative; max-width: 900px; }
     .hero h1 {
       font-size: clamp(2.2rem, 6vw, 3.8rem);
       line-height: 1.15;
       margin-bottom: 0.5rem;
     }
     .hero .dates {
-      font-size: 1.1rem; color: var(--gold);
+      font-size: 1.1rem; color: var(--tan);
       font-weight: 600; letter-spacing: 0.05em;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem;
     }
-    .route-visual {
-      display: flex; align-items: center; justify-content: center;
-      flex-wrap: wrap; gap: 0.4rem 0.15rem;
-      margin-bottom: 2rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);
+    .hero .subtitle {
+      font-size: 1rem; color: rgba(255,255,255,0.75);
+      font-weight: 500; margin-bottom: 2.5rem;
     }
-    .route-visual .stop {
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.3rem 0.7rem; border-radius: 2rem; white-space: nowrap;
+
+    /* ── Destination Cards ── */
+    .dest-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      max-width: 750px;
+      margin-left: auto; margin-right: auto;
     }
-    .route-visual .arrow { color: var(--gold); font-weight: 600; }
+    .dest-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+      aspect-ratio: 3 / 4;
+      text-decoration: none;
+    }
+    .dest-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    .dest-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .dest-card .dest-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.05) 55%);
+      display: flex; align-items: flex-end;
+      padding: 0.75rem;
+    }
+    .dest-card .dest-name {
+      color: #fff; font-weight: 700; font-size: 0.85rem;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      line-height: 1.2;
+    }
+
     .hero-overview {
-      font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.8);
+      font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,0.75);
       max-width: 550px; margin: 0 auto;
     }
     .scroll-hint {
       position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
       animation: bounce 2s infinite;
-      color: var(--gold); font-size: 1.5rem;
+      color: var(--tan); font-size: 1.5rem;
     }
     @keyframes bounce {
       0%, 100% { transform: translateX(-50%) translateY(0); }
       50% { transform: translateX(-50%) translateY(8px); }
     }
 
-    /* ── Section shared ── */
-    section { padding: 4rem 1.5rem; }
+    /* ── Collapsible Sections ── */
+    .collapsible-section { padding: 0; }
+    .section-header {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.75rem;
+      padding: 2.5rem 1.5rem 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .section-header:hover .toggle-icon { color: var(--green); }
     .section-title {
       text-align: center; font-size: clamp(1.6rem, 4vw, 2.2rem);
-      margin-bottom: 0.5rem; color: var(--navy);
+      margin-bottom: 0; color: var(--forest);
     }
+    .toggle-icon {
+      font-size: 1.3rem; color: var(--text-light);
+      transition: transform 0.3s, color 0.2s;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .toggle-icon.collapsed { transform: rotate(-90deg); }
     .section-subtitle {
-      text-align: center; color: var(--text-light); margin-bottom: 2.5rem;
+      text-align: center; color: var(--text-light);
+      padding: 0 1.5rem;
+      margin-top: 0.5rem;
       font-size: 0.95rem;
+    }
+    .section-body {
+      padding: 1.5rem 1.5rem 3rem;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+    }
+    .section-body.collapsed {
+      max-height: 0 !important;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
     }
 
     /* ── Phase Legend ── */
@@ -154,7 +220,7 @@
       position: relative;
       margin-left: 56px;
       margin-bottom: 1.25rem;
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 1.25rem 1.25rem 1rem;
       border-left: 4px solid;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -170,7 +236,7 @@
       left: -44px; top: 1.3rem;
       width: 14px; height: 14px;
       border-radius: 50%;
-      border: 3px solid #fff;
+      border: 3px solid var(--cream);
       box-shadow: 0 0 0 2px currentColor;
       background: currentColor;
     }
@@ -198,7 +264,7 @@
     .day-card .phase-badge {
       font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
       letter-spacing: 0.06em; padding: 0.15rem 0.55rem;
-      border-radius: 1rem; background: currentColor; color: #fff;
+      border-radius: 1rem; color: var(--white);
     }
     .day-card.travel .phase-badge { background: var(--travel-accent); }
     .day-card.beach  .phase-badge { background: var(--beach-accent); }
@@ -207,10 +273,10 @@
     .day-card .card-body { color: var(--text); font-size: 0.9rem; }
     .card-locations {
       display: flex; align-items: center; gap: 0.4rem;
-      font-weight: 600; margin-bottom: 0.5rem; color: var(--navy);
+      font-weight: 600; margin-bottom: 0.5rem; color: var(--forest);
       font-size: 0.88rem; flex-wrap: wrap;
     }
-    .card-locations .loc-arrow { color: var(--gold); }
+    .card-locations .loc-arrow { color: var(--tan); }
     .card-activities { margin-bottom: 0.5rem; color: var(--text); }
     .card-activities li { margin-left: 1rem; margin-bottom: 0.15rem; }
     .ride-time {
@@ -222,10 +288,10 @@
     }
 
     /* ── Map ── */
-    .map-section { background: var(--sand); }
+    .map-section { background: var(--warm-white); }
     #map {
       max-width: 900px; margin: 0 auto;
-      height: 450px; border-radius: 12px;
+      height: 450px; border-radius: 10px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       z-index: 1;
     }
@@ -236,17 +302,17 @@
       display: grid; gap: 1.5rem;
     }
     .flight-group {
-      background: #fff; border-radius: 12px;
+      background: var(--white); border-radius: 10px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
       overflow: hidden;
     }
     .flight-group-header {
       padding: 1rem 1.25rem;
       font-family: 'Playfair Display', serif;
-      font-size: 1.1rem; font-weight: 700; color: #fff;
+      font-size: 1.1rem; font-weight: 700; color: var(--white);
     }
-    .flight-group-header.international { background: var(--navy); }
-    .flight-group-header.domestic { background: var(--teal); }
+    .flight-group-header.international { background: var(--forest); }
+    .flight-group-header.domestic { background: var(--green); }
     .flight-group-header .cost {
       float: right; font-family: 'Inter', sans-serif;
       font-size: 0.85rem; font-weight: 600;
@@ -258,7 +324,7 @@
       font-weight: 700; font-size: 0.82rem; text-transform: uppercase;
       letter-spacing: 0.05em; color: var(--text-light);
       margin-bottom: 0.6rem; margin-top: 0.75rem;
-      padding-bottom: 0.3rem; border-bottom: 1px solid #eee;
+      padding-bottom: 0.3rem; border-bottom: 1px solid var(--sand);
     }
     .flight-direction:first-child { margin-top: 0; }
     .flight-leg {
@@ -267,42 +333,86 @@
       align-items: center;
       gap: 0.6rem;
       padding: 0.65rem 0;
-      border-bottom: 1px dashed #eee;
+      border-bottom: 1px dashed var(--sand);
       font-size: 0.85rem;
     }
     .flight-leg:last-child { border-bottom: none; }
-    .flight-leg .fl-from, .flight-leg .fl-to {
-      font-weight: 500;
-    }
+    .flight-leg .fl-from, .flight-leg .fl-to { font-weight: 500; }
     .flight-leg .fl-from .fl-time,
     .flight-leg .fl-to .fl-time {
-      font-size: 0.92rem; font-weight: 700; color: var(--navy);
+      font-size: 0.92rem; font-weight: 700; color: var(--forest);
     }
     .flight-leg .fl-from .fl-detail,
     .flight-leg .fl-to .fl-detail {
       font-size: 0.75rem; color: var(--text-light);
     }
-    .flight-leg .fl-arrow {
-      color: var(--gold); font-size: 1.1rem;
-    }
+    .flight-leg .fl-arrow { color: var(--tan); font-size: 1.1rem; }
     .flight-leg .fl-meta {
       text-align: right; font-size: 0.75rem; color: var(--text-light);
     }
-    .flight-leg .fl-meta .fl-number {
-      font-weight: 600; color: var(--text);
-    }
+    .flight-leg .fl-meta .fl-number { font-weight: 600; color: var(--text); }
     .flight-leg .fl-meta .fl-class {
       display: inline-block;
       font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
       padding: 0.1rem 0.35rem; border-radius: 0.25rem;
-      background: var(--gold-light); color: var(--navy);
+      background: var(--sage-light); color: var(--forest);
       margin-top: 0.15rem;
+    }
+
+    /* ── Lodging ── */
+    .lodging-section { background: var(--warm-white); }
+    .lodging-grid {
+      max-width: 900px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .lodging-card {
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .lodging-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .lodging-card-header {
+      background: var(--forest);
+      padding: 0.85rem 1.15rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .lodging-city {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; font-weight: 700; color: var(--white);
+    }
+    .lodging-dates {
+      font-size: 0.72rem; font-weight: 500;
+      color: var(--sage-light);
+    }
+    .lodging-card-body {
+      padding: 1.5rem 1.15rem;
+      text-align: center;
+    }
+    .lodging-unbooked-icon {
+      font-size: 2rem; margin-bottom: 0.5rem;
+      opacity: 0.3;
+    }
+    .lodging-unbooked-text {
+      font-weight: 600; font-size: 0.95rem;
+      color: var(--charcoal-mid);
+      margin-bottom: 0.25rem;
+    }
+    .lodging-unbooked-sub {
+      font-size: 0.82rem; color: var(--text-light);
+      font-style: italic;
     }
 
     /* ── Footer ── */
     footer {
       text-align: center; padding: 2rem 1.5rem;
-      background: var(--navy); color: rgba(255,255,255,0.5);
+      background: var(--forest); color: rgba(255,255,255,0.45);
       font-size: 0.8rem;
     }
 
@@ -310,8 +420,11 @@
     @media (max-width: 640px) {
       nav { gap: 0.8rem; padding: 0.6rem 1rem; }
       nav a { font-size: 0.75rem; }
-      section { padding: 3rem 1rem; }
       .hero { padding: 4rem 1rem 3rem; min-height: 90vh; }
+      .dest-cards { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+      .dest-card .dest-name { font-size: 0.75rem; }
+      .section-header { padding: 2rem 1rem 0; }
+      .section-body { padding: 1rem 1rem 2.5rem; }
       .timeline::before { left: 16px; }
       .day-card { margin-left: 42px; padding: 1rem; }
       .day-card::before { left: -38px; width: 12px; height: 12px; }
@@ -321,6 +434,7 @@
         gap: 0.25rem;
       }
       .flight-leg .fl-arrow { display: none; }
+      .lodging-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -332,29 +446,43 @@
   <a href="#itinerary">Itinerary</a>
   <a href="#map-section">Map</a>
   <a href="#flights">Flights</a>
+  <a href="#lodging">Lodging</a>
 </nav>
 
 <!-- Hero Section -->
 <section class="hero" id="hero">
   <div class="hero-content">
-    <div class="hero-flag">&#127481;&#127469;</div>
     <h1>Thailand 2026</h1>
     <div class="dates">April 12 &ndash; 25, 2026 &middot; 14 Days</div>
-    <div class="route-visual">
-      <span class="stop">Kansas City</span>
-      <span class="arrow">&rarr;</span>
-      <span class="stop">Bangkok</span>
-      <span class="arrow">&rarr;</span>
-      <span class="stop">Koh Samui</span>
-      <span class="arrow">&rarr;</span>
-      <span class="stop">Chiang Mai</span>
-      <span class="arrow">&rarr;</span>
-      <span class="stop">Mae Hong Son Loop</span>
-      <span class="arrow">&rarr;</span>
-      <span class="stop">Bangkok</span>
-      <span class="arrow">&rarr;</span>
-      <span class="stop">Home</span>
+    <div class="subtitle">Operation Adventure Thailand: Two dudes, 9 flights, 14 days</div>
+
+    <div class="dest-cards">
+      <a class="dest-card" href="#itinerary">
+        <img src="https://images.unsplash.com/photo-1571115177098-da782d602d98?w=400&h=530&fit=crop" alt="Kansas City skyline" loading="lazy">
+        <div class="dest-overlay"><span class="dest-name">Kansas City</span></div>
+      </a>
+      <a class="dest-card" href="#itinerary">
+        <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&h=530&fit=crop" alt="Bangkok temples" loading="lazy">
+        <div class="dest-overlay"><span class="dest-name">Bangkok</span></div>
+      </a>
+      <a class="dest-card" href="#itinerary">
+        <img src="https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&h=530&fit=crop" alt="Koh Samui beach" loading="lazy">
+        <div class="dest-overlay"><span class="dest-name">Koh Samui</span></div>
+      </a>
+      <a class="dest-card" href="#itinerary">
+        <img src="https://images.unsplash.com/photo-1598935898489-010b4e830ea3?w=400&h=530&fit=crop" alt="Chiang Mai temple" loading="lazy">
+        <div class="dest-overlay"><span class="dest-name">Chiang Mai</span></div>
+      </a>
+      <a class="dest-card" href="#itinerary">
+        <img src="https://images.unsplash.com/photo-1601106634498-27e4bbc0e0aa?w=400&h=530&fit=crop" alt="Mountain road in northern Thailand" loading="lazy">
+        <div class="dest-overlay"><span class="dest-name">Mae Hong Son Loop</span></div>
+      </a>
+      <a class="dest-card" href="#hero">
+        <img src="https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?w=400&h=530&fit=crop" alt="Home sweet home" loading="lazy">
+        <div class="dest-overlay"><span class="dest-name">Home</span></div>
+      </a>
     </div>
+
     <p class="hero-overview">
       Two weeks across Thailand &mdash; from the beaches of Koh Samui to the mountain curves of
       the Mae Hong Son motorbike loop. Flights, ferries, and 450cc Royal Enfields through the
@@ -365,472 +493,566 @@
 </section>
 
 <!-- Day-by-Day Itinerary -->
-<section id="itinerary">
-  <h2 class="section-title">Day-by-Day Itinerary</h2>
-  <p class="section-subtitle">14 days across Thailand &mdash; tap a card for details</p>
-
-  <div class="legend">
-    <div class="legend-item"><span class="legend-dot travel"></span> Travel</div>
-    <div class="legend-item"><span class="legend-dot beach"></span> Beach &middot; Koh Samui</div>
-    <div class="legend-item"><span class="legend-dot loop"></span> Motorbike Loop</div>
+<section class="collapsible-section" id="itinerary">
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title">Day-by-Day Itinerary</h2>
+    <span class="toggle-icon">&#9660;</span>
   </div>
+  <p class="section-subtitle">14 days across Thailand &mdash; tap a card for details</p>
+  <div class="section-body">
 
-  <div class="timeline">
-
-    <!-- Day 1 -->
-    <div class="day-card travel">
-      <div class="card-header">
-        <span class="day-label">Day 1 &mdash; Sunday</span>
-        <span class="phase-badge">Travel</span>
-      </div>
-      <div class="day-date">April 12, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Kansas City <span class="loc-arrow">&rarr;</span> In the Air
-        </div>
-        <ul class="card-activities">
-          <li>Depart MCI 7:55 AM on Delta DL2105</li>
-          <li>Connecting through Seattle &amp; Seoul</li>
-        </ul>
-      </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot travel"></span> Travel</div>
+      <div class="legend-item"><span class="legend-dot beach"></span> Beach &middot; Koh Samui</div>
+      <div class="legend-item"><span class="legend-dot loop"></span> Motorbike Loop</div>
     </div>
 
-    <!-- Day 2 -->
-    <div class="day-card travel">
-      <div class="card-header">
-        <span class="day-label">Day 2 &mdash; Monday</span>
-        <span class="phase-badge">Travel</span>
-      </div>
-      <div class="day-date">April 13, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          In the Air <span class="loc-arrow">&rarr;</span> Bangkok
-        </div>
-        <ul class="card-activities">
-          <li>Landing in Bangkok ~11:40 PM</li>
-          <li>Transfer to hotel &amp; rest</li>
-        </ul>
-      </div>
-    </div>
+    <div class="timeline">
 
-    <!-- Day 3 -->
-    <div class="day-card beach">
-      <div class="card-header">
-        <span class="day-label">Day 3 &mdash; Tuesday</span>
-        <span class="phase-badge">Beach</span>
-      </div>
-      <div class="day-date">April 14, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Bangkok <span class="loc-arrow">&rarr;</span> Koh Samui
+      <!-- Day 1 -->
+      <div class="day-card travel">
+        <div class="card-header">
+          <span class="day-label">Day 1 &mdash; Sunday</span>
+          <span class="phase-badge">Travel</span>
         </div>
-        <ul class="card-activities">
-          <li>Bangkok Airways flight to Koh Samui (PG115, 9:15 AM)</li>
-          <li>Arrive ~10:45 AM &mdash; settle into beach accommodation</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Day 4 -->
-    <div class="day-card beach">
-      <div class="card-header">
-        <span class="day-label">Day 4 &mdash; Wednesday</span>
-        <span class="phase-badge">Beach</span>
-      </div>
-      <div class="day-date">April 15, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Koh Samui
+        <div class="day-date">April 12, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Kansas City <span class="loc-arrow">&rarr;</span> In the Air
+          </div>
+          <ul class="card-activities">
+            <li>Depart MCI 7:55 AM on Delta DL2105</li>
+            <li>Connecting through Seattle &amp; Seoul</li>
+          </ul>
         </div>
-        <ul class="card-activities">
-          <li>Beach day &mdash; relax, explore the island</li>
-        </ul>
       </div>
-    </div>
 
-    <!-- Day 5 -->
-    <div class="day-card beach">
-      <div class="card-header">
-        <span class="day-label">Day 5 &mdash; Thursday</span>
-        <span class="phase-badge">Beach</span>
-      </div>
-      <div class="day-date">April 16, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Koh Samui
+      <!-- Day 2 -->
+      <div class="day-card travel">
+        <div class="card-header">
+          <span class="day-label">Day 2 &mdash; Monday</span>
+          <span class="phase-badge">Travel</span>
         </div>
-        <ul class="card-activities">
-          <li>Beach day &mdash; hangout, water activities</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Day 6 -->
-    <div class="day-card travel">
-      <div class="card-header">
-        <span class="day-label">Day 6 &mdash; Friday</span>
-        <span class="phase-badge">Travel</span>
-      </div>
-      <div class="day-date">April 17, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Koh Samui <span class="loc-arrow">&rarr;</span> Chiang Mai
+        <div class="day-date">April 13, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            In the Air <span class="loc-arrow">&rarr;</span> Bangkok
+          </div>
+          <ul class="card-activities">
+            <li>Landing in Bangkok ~11:40 PM</li>
+            <li>Transfer to hotel &amp; rest</li>
+          </ul>
         </div>
-        <ul class="card-activities">
-          <li>Bangkok Airways flyout to Chiang Mai (PG241, 8:55 AM)</li>
-          <li>Arrive ~10:40 AM &mdash; explore Chiang Mai, prep for the loop</li>
-        </ul>
       </div>
-    </div>
 
-    <!-- Day 7 -->
-    <div class="day-card loop">
-      <div class="card-header">
-        <span class="day-label">Day 7 &mdash; Saturday</span>
-        <span class="phase-badge">Loop</span>
-      </div>
-      <div class="day-date">April 18, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Chiang Mai <span class="loc-arrow">&rarr;</span> Mae Sariang
+      <!-- Day 3 -->
+      <div class="day-card beach">
+        <div class="card-header">
+          <span class="day-label">Day 3 &mdash; Tuesday</span>
+          <span class="phase-badge">Beach</span>
         </div>
-        <ul class="card-activities">
-          <li>Day 1 on the Mae Hong Son Loop</li>
-          <li>Ride south through Doi Inthanon area to Mae Sariang</li>
-        </ul>
-        <span class="ride-time">&#127957; 3&ndash;4 hrs ride</span>
-      </div>
-    </div>
-
-    <!-- Day 8 -->
-    <div class="day-card loop">
-      <div class="card-header">
-        <span class="day-label">Day 8 &mdash; Sunday</span>
-        <span class="phase-badge">Loop</span>
-      </div>
-      <div class="day-date">April 19, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Mae Sariang <span class="loc-arrow">&rarr;</span> Mae Hong Son
+        <div class="day-date">April 14, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Bangkok <span class="loc-arrow">&rarr;</span> Koh Samui
+          </div>
+          <ul class="card-activities">
+            <li>Bangkok Airways flight to Koh Samui (PG115, 9:15 AM)</li>
+            <li>Arrive ~10:45 AM &mdash; settle into beach accommodation</li>
+          </ul>
         </div>
-        <ul class="card-activities">
-          <li>Day 2 on the loop &mdash; ride north to Mae Hong Son</li>
-          <li>Winding mountain roads through the highlands</li>
-        </ul>
-        <span class="ride-time">&#127957; 3&ndash;4 hrs ride</span>
       </div>
-    </div>
 
-    <!-- Day 9 -->
-    <div class="day-card loop">
-      <div class="card-header">
-        <span class="day-label">Day 9 &mdash; Monday</span>
-        <span class="phase-badge">Loop</span>
-      </div>
-      <div class="day-date">April 20, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Mae Hong Son
+      <!-- Day 4 -->
+      <div class="day-card beach">
+        <div class="card-header">
+          <span class="day-label">Day 4 &mdash; Wednesday</span>
+          <span class="phase-badge">Beach</span>
         </div>
-        <ul class="card-activities">
-          <li>Day 3 &mdash; layover day in Mae Hong Son</li>
-          <li>Day trip to Ban Rak Thai (Chinese-Yunnan village at the border)</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Day 10 -->
-    <div class="day-card loop">
-      <div class="card-header">
-        <span class="day-label">Day 10 &mdash; Tuesday</span>
-        <span class="phase-badge">Loop</span>
-      </div>
-      <div class="day-date">April 21, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Mae Hong Son <span class="loc-arrow">&rarr;</span> Pai
+        <div class="day-date">April 15, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">Koh Samui</div>
+          <ul class="card-activities">
+            <li>Beach day &mdash; relax, explore the island</li>
+          </ul>
         </div>
-        <ul class="card-activities">
-          <li>Day 4 on the loop &mdash; ride east to Pai</li>
-          <li>762 curves through the mountains</li>
-        </ul>
-        <span class="ride-time">&#127957; 3&ndash;4 hrs ride</span>
       </div>
-    </div>
 
-    <!-- Day 11 -->
-    <div class="day-card loop">
-      <div class="card-header">
-        <span class="day-label">Day 11 &mdash; Wednesday</span>
-        <span class="phase-badge">Loop</span>
-      </div>
-      <div class="day-date">April 22, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Pai
+      <!-- Day 5 -->
+      <div class="day-card beach">
+        <div class="card-header">
+          <span class="day-label">Day 5 &mdash; Thursday</span>
+          <span class="phase-badge">Beach</span>
         </div>
-        <ul class="card-activities">
-          <li>Day 5 &mdash; layover day in Pai</li>
-          <li>Pai Canyon, hot springs &amp; explore the town</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Day 12 -->
-    <div class="day-card loop">
-      <div class="card-header">
-        <span class="day-label">Day 12 &mdash; Thursday</span>
-        <span class="phase-badge">Loop</span>
-      </div>
-      <div class="day-date">April 23, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Pai <span class="loc-arrow">&rarr;</span> Chiang Mai
+        <div class="day-date">April 16, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">Koh Samui</div>
+          <ul class="card-activities">
+            <li>Beach day &mdash; hangout, water activities</li>
+          </ul>
         </div>
-        <ul class="card-activities">
-          <li>Day 6 &mdash; final leg of the loop back to Chiang Mai</li>
-          <li>Return motorcycles</li>
-        </ul>
-        <span class="ride-time">&#127957; ~3 hrs ride</span>
       </div>
-    </div>
 
-    <!-- Day 13 -->
-    <div class="day-card travel">
-      <div class="card-header">
-        <span class="day-label">Day 13 &mdash; Friday</span>
-        <span class="phase-badge">Travel</span>
-      </div>
-      <div class="day-date">April 24, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Chiang Mai <span class="loc-arrow">&rarr;</span> Bangkok
+      <!-- Day 6 -->
+      <div class="day-card travel">
+        <div class="card-header">
+          <span class="day-label">Day 6 &mdash; Friday</span>
+          <span class="phase-badge">Travel</span>
         </div>
-        <ul class="card-activities">
-          <li>Bangkok Airways flight to Bangkok (PG218, 2:35 PM)</li>
-          <li>Arrive ~4:00 PM &mdash; last evening in Bangkok</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Day 14 -->
-    <div class="day-card travel">
-      <div class="card-header">
-        <span class="day-label">Day 14 &mdash; Saturday</span>
-        <span class="phase-badge">Travel</span>
-      </div>
-      <div class="day-date">April 25, 2026</div>
-      <div class="card-body">
-        <div class="card-locations">
-          Bangkok <span class="loc-arrow">&rarr;</span> Kansas City
+        <div class="day-date">April 17, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Koh Samui <span class="loc-arrow">&rarr;</span> Chiang Mai
+          </div>
+          <ul class="card-activities">
+            <li>Bangkok Airways flyout to Chiang Mai (PG241, 8:55 AM)</li>
+            <li>Arrive ~10:40 AM &mdash; explore Chiang Mai, prep for the loop</li>
+          </ul>
         </div>
-        <ul class="card-activities">
-          <li>Depart BKK 9:50 AM on Delta DL7853</li>
-          <li>Connecting through Seoul &amp; Salt Lake City</li>
-          <li>Arrive Kansas City ~11:03 PM same day</li>
-        </ul>
       </div>
-    </div>
 
+      <!-- Day 7 -->
+      <div class="day-card loop">
+        <div class="card-header">
+          <span class="day-label">Day 7 &mdash; Saturday</span>
+          <span class="phase-badge">Loop</span>
+        </div>
+        <div class="day-date">April 18, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Chiang Mai <span class="loc-arrow">&rarr;</span> Mae Sariang
+          </div>
+          <ul class="card-activities">
+            <li>Day 1 on the Mae Hong Son Loop</li>
+            <li>Ride south through Doi Inthanon area to Mae Sariang</li>
+          </ul>
+          <span class="ride-time">&#127957; 3&ndash;4 hrs ride</span>
+        </div>
+      </div>
+
+      <!-- Day 8 -->
+      <div class="day-card loop">
+        <div class="card-header">
+          <span class="day-label">Day 8 &mdash; Sunday</span>
+          <span class="phase-badge">Loop</span>
+        </div>
+        <div class="day-date">April 19, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Mae Sariang <span class="loc-arrow">&rarr;</span> Mae Hong Son
+          </div>
+          <ul class="card-activities">
+            <li>Day 2 on the loop &mdash; ride north to Mae Hong Son</li>
+            <li>Winding mountain roads through the highlands</li>
+          </ul>
+          <span class="ride-time">&#127957; 3&ndash;4 hrs ride</span>
+        </div>
+      </div>
+
+      <!-- Day 9 -->
+      <div class="day-card loop">
+        <div class="card-header">
+          <span class="day-label">Day 9 &mdash; Monday</span>
+          <span class="phase-badge">Loop</span>
+        </div>
+        <div class="day-date">April 20, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">Mae Hong Son</div>
+          <ul class="card-activities">
+            <li>Day 3 &mdash; layover day in Mae Hong Son</li>
+            <li>Day trip to Ban Rak Thai (Chinese-Yunnan village at the border)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Day 10 -->
+      <div class="day-card loop">
+        <div class="card-header">
+          <span class="day-label">Day 10 &mdash; Tuesday</span>
+          <span class="phase-badge">Loop</span>
+        </div>
+        <div class="day-date">April 21, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Mae Hong Son <span class="loc-arrow">&rarr;</span> Pai
+          </div>
+          <ul class="card-activities">
+            <li>Day 4 on the loop &mdash; ride east to Pai</li>
+            <li>762 curves through the mountains</li>
+          </ul>
+          <span class="ride-time">&#127957; 3&ndash;4 hrs ride</span>
+        </div>
+      </div>
+
+      <!-- Day 11 -->
+      <div class="day-card loop">
+        <div class="card-header">
+          <span class="day-label">Day 11 &mdash; Wednesday</span>
+          <span class="phase-badge">Loop</span>
+        </div>
+        <div class="day-date">April 22, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">Pai</div>
+          <ul class="card-activities">
+            <li>Day 5 &mdash; layover day in Pai</li>
+            <li>Pai Canyon, hot springs &amp; explore the town</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Day 12 -->
+      <div class="day-card loop">
+        <div class="card-header">
+          <span class="day-label">Day 12 &mdash; Thursday</span>
+          <span class="phase-badge">Loop</span>
+        </div>
+        <div class="day-date">April 23, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Pai <span class="loc-arrow">&rarr;</span> Chiang Mai
+          </div>
+          <ul class="card-activities">
+            <li>Day 6 &mdash; final leg of the loop back to Chiang Mai</li>
+            <li>Return motorcycles</li>
+          </ul>
+          <span class="ride-time">&#127957; ~3 hrs ride</span>
+        </div>
+      </div>
+
+      <!-- Day 13 -->
+      <div class="day-card travel">
+        <div class="card-header">
+          <span class="day-label">Day 13 &mdash; Friday</span>
+          <span class="phase-badge">Travel</span>
+        </div>
+        <div class="day-date">April 24, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Chiang Mai <span class="loc-arrow">&rarr;</span> Bangkok
+          </div>
+          <ul class="card-activities">
+            <li>Bangkok Airways flight to Bangkok (PG218, 2:35 PM)</li>
+            <li>Arrive ~4:00 PM &mdash; last evening in Bangkok</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Day 14 -->
+      <div class="day-card travel">
+        <div class="card-header">
+          <span class="day-label">Day 14 &mdash; Saturday</span>
+          <span class="phase-badge">Travel</span>
+        </div>
+        <div class="day-date">April 25, 2026</div>
+        <div class="card-body">
+          <div class="card-locations">
+            Bangkok <span class="loc-arrow">&rarr;</span> Kansas City
+          </div>
+          <ul class="card-activities">
+            <li>Depart BKK 9:50 AM on Delta DL7853</li>
+            <li>Connecting through Seoul &amp; Salt Lake City</li>
+            <li>Arrive Kansas City ~11:03 PM same day</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
 <!-- Map Section -->
-<section class="map-section" id="map-section">
-  <h2 class="section-title">Route Map</h2>
+<section class="collapsible-section map-section" id="map-section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title">Route Map</h2>
+    <span class="toggle-icon">&#9660;</span>
+  </div>
   <p class="section-subtitle">Key stops and the Mae Hong Son motorbike loop</p>
-  <div id="map"></div>
+  <div class="section-body">
+    <div id="map"></div>
+  </div>
 </section>
 
 <!-- Flights Section -->
-<section id="flights">
-  <h2 class="section-title">Flights</h2>
+<section class="collapsible-section" id="flights">
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title">Flights</h2>
+    <span class="toggle-icon">&#9660;</span>
+  </div>
   <p class="section-subtitle">International &amp; in-country flight details</p>
+  <div class="section-body">
 
-  <div class="flights-grid">
+    <div class="flights-grid">
 
-    <!-- International Flights -->
-    <div class="flight-group">
-      <div class="flight-group-header international">
-        Delta Air Lines &mdash; International
-        <span class="cost">$1,528 round trip</span>
+      <!-- International Flights -->
+      <div class="flight-group">
+        <div class="flight-group-header international">
+          Delta Air Lines &mdash; International
+          <span class="cost">$1,528 round trip</span>
+        </div>
+        <div class="flight-legs">
+
+          <div class="flight-direction">Outbound &mdash; Sunday, April 12</div>
+
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">7:55 AM</div>
+              <div class="fl-detail">Kansas City (MCI)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">10:00 AM</div>
+              <div class="fl-detail">Seattle (SEA)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">DL2105</div>
+              <div>4 hrs</div>
+              <div class="fl-class">Comfort+</div>
+            </div>
+          </div>
+
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">12:45 PM</div>
+              <div class="fl-detail">Seattle (SEA)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">4:30 PM +1</div>
+              <div class="fl-detail">Seoul (ICN)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">DL197</div>
+              <div>12 hrs</div>
+              <div class="fl-class">Comfort+</div>
+            </div>
+          </div>
+
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">7:45 PM</div>
+              <div class="fl-detail">Seoul (ICN)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">11:40 PM</div>
+              <div class="fl-detail">Bangkok (BKK)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">DL7917</div>
+              <div>6 hrs</div>
+              <div class="fl-class">Economy</div>
+            </div>
+          </div>
+
+          <div class="flight-direction">Return &mdash; Saturday, April 25</div>
+
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">9:50 AM</div>
+              <div class="fl-detail">Bangkok (BKK)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">5:20 PM</div>
+              <div class="fl-detail">Seoul (ICN)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">DL7853</div>
+              <div>5.5 hrs</div>
+              <div class="fl-class">Economy</div>
+            </div>
+          </div>
+
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">7:20 PM</div>
+              <div class="fl-detail">Seoul (ICN)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">2:00 PM</div>
+              <div class="fl-detail">Salt Lake City (SLC)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">DL172</div>
+              <div>11 hrs</div>
+              <div class="fl-class">Comfort+</div>
+            </div>
+          </div>
+
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">5:30 PM</div>
+              <div class="fl-detail">Salt Lake City (SLC)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">11:03 PM</div>
+              <div class="fl-detail">Kansas City (MCI)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">DL2993</div>
+              <div>2.5 hrs</div>
+              <div class="fl-class">Comfort+</div>
+            </div>
+          </div>
+
+        </div>
       </div>
-      <div class="flight-legs">
 
-        <div class="flight-direction">Outbound &mdash; Sunday, April 12</div>
-
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">7:55 AM</div>
-            <div class="fl-detail">Kansas City (MCI)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">10:00 AM</div>
-            <div class="fl-detail">Seattle (SEA)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">DL2105</div>
-            <div>4 hrs</div>
-            <div class="fl-class">Comfort+</div>
-          </div>
+      <!-- In-Country Flights -->
+      <div class="flight-group">
+        <div class="flight-group-header domestic">
+          Bangkok Airways &mdash; In-Country
+          <span class="cost">~$407/person</span>
         </div>
+        <div class="flight-legs">
 
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">12:45 PM</div>
-            <div class="fl-detail">Seattle (SEA)</div>
+          <div class="flight-direction">Bangkok &rarr; Koh Samui &mdash; Tuesday, April 14</div>
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">9:15 AM</div>
+              <div class="fl-detail">Bangkok (BKK)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">10:45 AM</div>
+              <div class="fl-detail">Koh Samui (USM)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">PG115</div>
+              <div>$175</div>
+              <div class="fl-class">44 lb checked</div>
+            </div>
           </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">4:30 PM +1</div>
-            <div class="fl-detail">Seoul (ICN)</div>
+
+          <div class="flight-direction">Koh Samui &rarr; Chiang Mai &mdash; Friday, April 17</div>
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">8:55 AM</div>
+              <div class="fl-detail">Koh Samui (USM)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">10:40 AM</div>
+              <div class="fl-detail">Chiang Mai (CNX)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">PG241</div>
+              <div>$150</div>
+              <div class="fl-class">44 lb checked</div>
+            </div>
           </div>
-          <div class="fl-meta">
-            <div class="fl-number">DL197</div>
-            <div>12 hrs</div>
-            <div class="fl-class">Comfort+</div>
+
+          <div class="flight-direction">Chiang Mai &rarr; Bangkok &mdash; Friday, April 24</div>
+          <div class="flight-leg">
+            <div class="fl-from">
+              <div class="fl-time">2:35 PM</div>
+              <div class="fl-detail">Chiang Mai (CNX)</div>
+            </div>
+            <div class="fl-arrow">&rarr;</div>
+            <div class="fl-to">
+              <div class="fl-time">4:00 PM</div>
+              <div class="fl-detail">Bangkok (BKK)</div>
+            </div>
+            <div class="fl-meta">
+              <div class="fl-number">PG218</div>
+              <div>$82</div>
+              <div class="fl-class">44 lb checked</div>
+            </div>
           </div>
+
         </div>
-
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">7:45 PM</div>
-            <div class="fl-detail">Seoul (ICN)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">11:40 PM</div>
-            <div class="fl-detail">Bangkok (BKK)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">DL7917</div>
-            <div>6 hrs</div>
-            <div class="fl-class">Economy</div>
-          </div>
-        </div>
-
-        <div class="flight-direction">Return &mdash; Saturday, April 25</div>
-
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">9:50 AM</div>
-            <div class="fl-detail">Bangkok (BKK)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">5:20 PM</div>
-            <div class="fl-detail">Seoul (ICN)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">DL7853</div>
-            <div>5.5 hrs</div>
-            <div class="fl-class">Economy</div>
-          </div>
-        </div>
-
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">7:20 PM</div>
-            <div class="fl-detail">Seoul (ICN)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">2:00 PM</div>
-            <div class="fl-detail">Salt Lake City (SLC)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">DL172</div>
-            <div>11 hrs</div>
-            <div class="fl-class">Comfort+</div>
-          </div>
-        </div>
-
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">5:30 PM</div>
-            <div class="fl-detail">Salt Lake City (SLC)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">11:03 PM</div>
-            <div class="fl-detail">Kansas City (MCI)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">DL2993</div>
-            <div>2.5 hrs</div>
-            <div class="fl-class">Comfort+</div>
-          </div>
-        </div>
-
       </div>
+
     </div>
+  </div>
+</section>
 
-    <!-- In-Country Flights -->
-    <div class="flight-group">
-      <div class="flight-group-header domestic">
-        Bangkok Airways &mdash; In-Country
-        <span class="cost">~$407/person</span>
+<!-- Lodging Section -->
+<section class="collapsible-section lodging-section" id="lodging">
+  <div class="section-header" onclick="toggleSection(this)">
+    <h2 class="section-title">Lodging</h2>
+    <span class="toggle-icon">&#9660;</span>
+  </div>
+  <p class="section-subtitle">Where we're staying along the way</p>
+  <div class="section-body">
+
+    <div class="lodging-grid">
+
+      <div class="lodging-card">
+        <div class="lodging-card-header">
+          <span class="lodging-city">Bangkok</span>
+          <span class="lodging-dates">Apr 13 &ndash; 14</span>
+        </div>
+        <div class="lodging-card-body">
+          <div class="lodging-unbooked-icon">&#128716;</div>
+          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
+          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        </div>
       </div>
-      <div class="flight-legs">
 
-        <div class="flight-direction">Bangkok &rarr; Koh Samui &mdash; Tuesday, April 14</div>
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">9:15 AM</div>
-            <div class="fl-detail">Bangkok (BKK)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">10:45 AM</div>
-            <div class="fl-detail">Koh Samui (USM)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">PG115</div>
-            <div>$175</div>
-            <div class="fl-class">44 lb checked</div>
-          </div>
+      <div class="lodging-card">
+        <div class="lodging-card-header">
+          <span class="lodging-city">Koh Samui</span>
+          <span class="lodging-dates">Apr 14 &ndash; 17</span>
         </div>
-
-        <div class="flight-direction">Koh Samui &rarr; Chiang Mai &mdash; Friday, April 17</div>
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">8:55 AM</div>
-            <div class="fl-detail">Koh Samui (USM)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">10:40 AM</div>
-            <div class="fl-detail">Chiang Mai (CNX)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">PG241</div>
-            <div>$150</div>
-            <div class="fl-class">44 lb checked</div>
-          </div>
+        <div class="lodging-card-body">
+          <div class="lodging-unbooked-icon">&#128716;</div>
+          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
+          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
         </div>
-
-        <div class="flight-direction">Chiang Mai &rarr; Bangkok &mdash; Friday, April 24</div>
-        <div class="flight-leg">
-          <div class="fl-from">
-            <div class="fl-time">2:35 PM</div>
-            <div class="fl-detail">Chiang Mai (CNX)</div>
-          </div>
-          <div class="fl-arrow">&rarr;</div>
-          <div class="fl-to">
-            <div class="fl-time">4:00 PM</div>
-            <div class="fl-detail">Bangkok (BKK)</div>
-          </div>
-          <div class="fl-meta">
-            <div class="fl-number">PG218</div>
-            <div>$82</div>
-            <div class="fl-class">44 lb checked</div>
-          </div>
-        </div>
-
       </div>
+
+      <div class="lodging-card">
+        <div class="lodging-card-header">
+          <span class="lodging-city">Chiang Mai</span>
+          <span class="lodging-dates">Apr 17 &ndash; 18</span>
+        </div>
+        <div class="lodging-card-body">
+          <div class="lodging-unbooked-icon">&#128716;</div>
+          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
+          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        </div>
+      </div>
+
+      <div class="lodging-card">
+        <div class="lodging-card-header">
+          <span class="lodging-city">Mae Sariang</span>
+          <span class="lodging-dates">Apr 18 &ndash; 19</span>
+        </div>
+        <div class="lodging-card-body">
+          <div class="lodging-unbooked-icon">&#128716;</div>
+          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
+          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        </div>
+      </div>
+
+      <div class="lodging-card">
+        <div class="lodging-card-header">
+          <span class="lodging-city">Mae Hong Son</span>
+          <span class="lodging-dates">Apr 19 &ndash; 21</span>
+        </div>
+        <div class="lodging-card-body">
+          <div class="lodging-unbooked-icon">&#128716;</div>
+          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
+          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        </div>
+      </div>
+
+      <div class="lodging-card">
+        <div class="lodging-card-header">
+          <span class="lodging-city">Pai</span>
+          <span class="lodging-dates">Apr 21 &ndash; 23</span>
+        </div>
+        <div class="lodging-card-body">
+          <div class="lodging-unbooked-icon">&#128716;</div>
+          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
+          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        </div>
+      </div>
+
     </div>
-
   </div>
 </section>
 
@@ -842,7 +1064,15 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  // Initialize map centered on Thailand
+  // ── Collapsible sections ──
+  function toggleSection(headerEl) {
+    const body = headerEl.parentElement.querySelector('.section-body');
+    const icon = headerEl.querySelector('.toggle-icon');
+    body.classList.toggle('collapsed');
+    icon.classList.toggle('collapsed');
+  }
+
+  // ── Map ──
   const map = L.map('map', {
     scrollWheelZoom: false
   }).setView([15.5, 101], 6);
@@ -852,7 +1082,6 @@
     maxZoom: 18
   }).addTo(map);
 
-  // Key locations
   const locations = {
     bangkok:     { lat: 13.7563, lng: 100.5018, name: 'Bangkok',       icon: '✈️', desc: 'Arrival & Departure' },
     kohSamui:    { lat:  9.5120, lng: 100.0136, name: 'Koh Samui',     icon: '🏖️', desc: 'Beach Days (Apr 14–16)' },
@@ -862,62 +1091,54 @@
     pai:         { lat: 19.3590, lng:  98.4428, name: 'Pai',           icon: '🌿', desc: 'Loop Days 4–5 (Apr 21–22)' }
   };
 
-  // Custom marker
   function makeIcon(emoji) {
     return L.divIcon({
-      html: `<div style="font-size:1.6rem;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">${emoji}</div>`,
+      html: '<div style="font-size:1.6rem;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3))">' + emoji + '</div>',
       className: '',
       iconSize: [32, 32],
       iconAnchor: [16, 16]
     });
   }
 
-  // Add markers
-  Object.values(locations).forEach(loc => {
+  Object.values(locations).forEach(function(loc) {
     L.marker([loc.lat, loc.lng], { icon: makeIcon(loc.icon) })
       .addTo(map)
-      .bindPopup(`<strong>${loc.name}</strong><br>${loc.desc}`);
+      .bindPopup('<strong>' + loc.name + '</strong><br>' + loc.desc);
   });
 
-  // Flight paths (dashed)
-  const flightStyle = { color: '#4a6fa5', weight: 2, dashArray: '8, 8', opacity: 0.6 };
+  var flightStyle = { color: '#3a7d5c', weight: 2, dashArray: '8, 8', opacity: 0.6 };
 
-  // Bangkok -> Koh Samui
   L.polyline([
     [locations.bangkok.lat, locations.bangkok.lng],
     [locations.kohSamui.lat, locations.kohSamui.lng]
   ], flightStyle).addTo(map);
 
-  // Koh Samui -> Chiang Mai
   L.polyline([
     [locations.kohSamui.lat, locations.kohSamui.lng],
     [locations.chiangMai.lat, locations.chiangMai.lng]
   ], flightStyle).addTo(map);
 
-  // Chiang Mai -> Bangkok
   L.polyline([
     [locations.chiangMai.lat, locations.chiangMai.lng],
     [locations.bangkok.lat, locations.bangkok.lng]
   ], flightStyle).addTo(map);
 
-  // Mae Hong Son Motorbike Loop (solid coral line)
-  const loopRoute = [
+  var loopRoute = [
     [locations.chiangMai.lat, locations.chiangMai.lng],
-    // Approximate route waypoints through the mountains
-    [18.59, 98.79],  // Heading south-west from Chiang Mai
-    [18.35, 98.44],  // Hot Od area
-    [18.16, 98.12],  // Approaching Mae Sariang
+    [18.59, 98.79],
+    [18.35, 98.44],
+    [18.16, 98.12],
     [locations.maeSariang.lat, locations.maeSariang.lng],
-    [18.40, 97.92],  // Heading north
+    [18.40, 97.92],
     [18.65, 97.93],
     [18.90, 97.94],
     [19.10, 97.96],
     [locations.maeHongSon.lat, locations.maeHongSon.lng],
-    [19.35, 98.05],  // Heading east toward Pai
+    [19.35, 98.05],
     [19.38, 98.15],
     [19.37, 98.30],
     [locations.pai.lat, locations.pai.lng],
-    [19.30, 98.55],  // Heading back to Chiang Mai
+    [19.30, 98.55],
     [19.15, 98.70],
     [19.00, 98.82],
     [18.90, 98.92],
@@ -925,21 +1146,19 @@
   ];
 
   L.polyline(loopRoute, {
-    color: '#e07a5f',
+    color: '#b5752d',
     weight: 4,
     opacity: 0.85,
     lineJoin: 'round'
   }).addTo(map).bindPopup('Mae Hong Son Motorbike Loop<br>~6 riding days');
 
-  // Add legend to map
-  const legend = L.control({ position: 'bottomright' });
+  var legend = L.control({ position: 'bottomright' });
   legend.onAdd = function() {
-    const div = L.DomUtil.create('div');
+    var div = L.DomUtil.create('div');
     div.style.cssText = 'background:#fff;padding:8px 12px;border-radius:8px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,0.15);line-height:1.8';
-    div.innerHTML = `
-      <div><span style="display:inline-block;width:20px;height:3px;background:#e07a5f;vertical-align:middle;margin-right:6px;border-radius:2px"></span>Motorbike Loop</div>
-      <div><span style="display:inline-block;width:20px;height:0;border-top:2px dashed #4a6fa5;vertical-align:middle;margin-right:6px"></span>Flights</div>
-    `;
+    div.innerHTML =
+      '<div><span style="display:inline-block;width:20px;height:3px;background:#b5752d;vertical-align:middle;margin-right:6px;border-radius:2px"></span>Motorbike Loop</div>' +
+      '<div><span style="display:inline-block;width:20px;height:0;border-top:2px dashed #3a7d5c;vertical-align:middle;margin-right:6px"></span>Flights</div>';
     return div;
   };
   legend.addTo(map);
