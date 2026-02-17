@@ -134,10 +134,6 @@
       line-height: 1.2;
     }
 
-    .hero-overview {
-      font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,0.75);
-      max-width: 550px; margin: 0 auto;
-    }
     .scroll-hint {
       position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
       animation: bounce 2s infinite;
@@ -408,6 +404,32 @@
       font-size: 0.82rem; color: var(--text-light);
       font-style: italic;
     }
+    .lodging-card-header.booked {
+      background: var(--green);
+    }
+    .lodging-booked-badge {
+      display: inline-block;
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.5rem; border-radius: 1rem;
+      background: rgba(255,255,255,0.2); color: var(--white);
+    }
+    .lodging-booked-body {
+      padding: 1.25rem 1.15rem;
+    }
+    .lodging-booked-body .lodging-detail {
+      display: flex; align-items: baseline; gap: 0.4rem;
+      font-size: 0.88rem; margin-bottom: 0.35rem;
+    }
+    .lodging-booked-body .lodging-detail-label {
+      font-weight: 600; color: var(--forest);
+      font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.03em;
+      min-width: 4rem;
+    }
+    .lodging-booked-body .lodging-detail-value {
+      color: var(--text);
+    }
 
     /* ── Footer ── */
     footer {
@@ -458,36 +480,30 @@
 
     <div class="dest-cards">
       <a class="dest-card" href="#itinerary">
-        <img src="https://images.unsplash.com/photo-1571115177098-da782d602d98?w=400&h=530&fit=crop" alt="Kansas City skyline" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=533&fit=crop&crop=center" alt="Kansas City skyline" loading="lazy">
         <div class="dest-overlay"><span class="dest-name">Kansas City</span></div>
       </a>
       <a class="dest-card" href="#itinerary">
-        <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&h=530&fit=crop" alt="Bangkok temples" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&h=533&fit=crop&crop=center" alt="Bangkok temples" loading="lazy">
         <div class="dest-overlay"><span class="dest-name">Bangkok</span></div>
       </a>
       <a class="dest-card" href="#itinerary">
-        <img src="https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&h=530&fit=crop" alt="Koh Samui beach" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=533&fit=crop&crop=center" alt="Koh Samui beach" loading="lazy">
         <div class="dest-overlay"><span class="dest-name">Koh Samui</span></div>
       </a>
       <a class="dest-card" href="#itinerary">
-        <img src="https://images.unsplash.com/photo-1598935898489-010b4e830ea3?w=400&h=530&fit=crop" alt="Chiang Mai temple" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&h=533&fit=crop&crop=center" alt="Chiang Mai temple" loading="lazy">
         <div class="dest-overlay"><span class="dest-name">Chiang Mai</span></div>
       </a>
       <a class="dest-card" href="#itinerary">
-        <img src="https://images.unsplash.com/photo-1601106634498-27e4bbc0e0aa?w=400&h=530&fit=crop" alt="Mountain road in northern Thailand" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=533&fit=crop&crop=center" alt="Mountain road in northern Thailand" loading="lazy">
         <div class="dest-overlay"><span class="dest-name">Mae Hong Son Loop</span></div>
       </a>
       <a class="dest-card" href="#hero">
-        <img src="https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?w=400&h=530&fit=crop" alt="Home sweet home" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=400&h=533&fit=crop&crop=center" alt="Home sweet home" loading="lazy">
         <div class="dest-overlay"><span class="dest-name">Home</span></div>
       </a>
     </div>
-
-    <p class="hero-overview">
-      Two weeks across Thailand &mdash; from the beaches of Koh Samui to the mountain curves of
-      the Mae Hong Son motorbike loop. Flights, ferries, and 450cc Royal Enfields through the
-      northern highlands. Follow along as the adventure unfolds.
-    </p>
   </div>
   <div class="scroll-hint">&#8964;</div>
 </section>
@@ -980,42 +996,52 @@
 
     <div class="lodging-grid">
 
+      <!-- 1. Bangkok (Arrival) — Booked -->
       <div class="lodging-card">
-        <div class="lodging-card-header">
+        <div class="lodging-card-header booked">
           <span class="lodging-city">Bangkok</span>
           <span class="lodging-dates">Apr 13 &ndash; 14</span>
         </div>
-        <div class="lodging-card-body">
-          <div class="lodging-unbooked-icon">&#128716;</div>
-          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
-          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        <div class="lodging-booked-body">
+          <span class="lodging-booked-badge">Booked</span>
+          <div class="lodging-detail" style="margin-top:0.6rem">
+            <span class="lodging-detail-label">Stay</span>
+            <span class="lodging-detail-value">1 night &mdash; arrival</span>
+          </div>
         </div>
       </div>
 
+      <!-- 2. Koh Samui — Booked -->
       <div class="lodging-card">
-        <div class="lodging-card-header">
+        <div class="lodging-card-header booked">
           <span class="lodging-city">Koh Samui</span>
           <span class="lodging-dates">Apr 14 &ndash; 17</span>
         </div>
-        <div class="lodging-card-body">
-          <div class="lodging-unbooked-icon">&#128716;</div>
-          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
-          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        <div class="lodging-booked-body">
+          <span class="lodging-booked-badge">Booked</span>
+          <div class="lodging-detail" style="margin-top:0.6rem">
+            <span class="lodging-detail-label">Stay</span>
+            <span class="lodging-detail-value">3 nights &mdash; beach days</span>
+          </div>
         </div>
       </div>
 
+      <!-- 3. Chiang Mai (Arrival) — Booked -->
       <div class="lodging-card">
-        <div class="lodging-card-header">
+        <div class="lodging-card-header booked">
           <span class="lodging-city">Chiang Mai</span>
           <span class="lodging-dates">Apr 17 &ndash; 18</span>
         </div>
-        <div class="lodging-card-body">
-          <div class="lodging-unbooked-icon">&#128716;</div>
-          <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
-          <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        <div class="lodging-booked-body">
+          <span class="lodging-booked-badge">Booked</span>
+          <div class="lodging-detail" style="margin-top:0.6rem">
+            <span class="lodging-detail-label">Stay</span>
+            <span class="lodging-detail-value">1 night &mdash; pre-loop</span>
+          </div>
         </div>
       </div>
 
+      <!-- 4. Mae Sariang — Unbooked -->
       <div class="lodging-card">
         <div class="lodging-card-header">
           <span class="lodging-city">Mae Sariang</span>
@@ -1028,6 +1054,7 @@
         </div>
       </div>
 
+      <!-- 5. Mae Hong Son — Unbooked -->
       <div class="lodging-card">
         <div class="lodging-card-header">
           <span class="lodging-city">Mae Hong Son</span>
@@ -1040,6 +1067,7 @@
         </div>
       </div>
 
+      <!-- 6. Pai — Unbooked -->
       <div class="lodging-card">
         <div class="lodging-card-header">
           <span class="lodging-city">Pai</span>
@@ -1049,6 +1077,36 @@
           <div class="lodging-unbooked-icon">&#128716;</div>
           <div class="lodging-unbooked-text">Nothing's Booked Yet</div>
           <div class="lodging-unbooked-sub">&mdash; get to work!</div>
+        </div>
+      </div>
+
+      <!-- 7. Chiang Mai (Return) — Booked -->
+      <div class="lodging-card">
+        <div class="lodging-card-header booked">
+          <span class="lodging-city">Chiang Mai</span>
+          <span class="lodging-dates">Apr 23 &ndash; 24</span>
+        </div>
+        <div class="lodging-booked-body">
+          <span class="lodging-booked-badge">Booked</span>
+          <div class="lodging-detail" style="margin-top:0.6rem">
+            <span class="lodging-detail-label">Stay</span>
+            <span class="lodging-detail-value">1 night &mdash; post-loop</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Bangkok (Return) — Booked -->
+      <div class="lodging-card">
+        <div class="lodging-card-header booked">
+          <span class="lodging-city">Bangkok</span>
+          <span class="lodging-dates">Apr 24 &ndash; 25</span>
+        </div>
+        <div class="lodging-booked-body">
+          <span class="lodging-booked-badge">Booked</span>
+          <div class="lodging-detail" style="margin-top:0.6rem">
+            <span class="lodging-detail-label">Stay</span>
+            <span class="lodging-detail-value">1 night &mdash; departure</span>
+          </div>
         </div>
       </div>
 
