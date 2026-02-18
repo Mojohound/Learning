@@ -66,18 +66,25 @@
       position: relative;
       min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(160deg, var(--forest) 0%, #1e4a3a 40%, var(--forest-mid) 100%);
+      background: var(--forest);
       color: var(--white);
       text-align: center;
       padding: 5rem 1.5rem 3rem;
       overflow: hidden;
     }
-    .hero::before {
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80&fit=crop') center/cover no-repeat;
+    }
+    .hero-bg::after {
       content: '';
       position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse at 20% 80%, rgba(201, 169, 110, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(90, 158, 120, 0.12) 0%, transparent 50%);
+      background: linear-gradient(
+        160deg,
+        rgba(26, 60, 52, 0.88) 0%,
+        rgba(30, 74, 58, 0.82) 40%,
+        rgba(45, 90, 63, 0.78) 100%
+      );
     }
     .hero-content { position: relative; max-width: 900px; }
     .hero h1 {
@@ -98,10 +105,10 @@
     /* ── Destination Cards ── */
     .dest-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       gap: 0.75rem;
       margin-bottom: 2rem;
-      max-width: 750px;
+      max-width: 800px;
       margin-left: auto; margin-right: auto;
     }
     .dest-card {
@@ -407,28 +414,17 @@
     .lodging-card-header.booked {
       background: var(--green);
     }
-    .lodging-booked-badge {
-      display: inline-block;
-      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.15rem 0.5rem; border-radius: 1rem;
-      background: rgba(255,255,255,0.2); color: var(--white);
-    }
     .lodging-booked-body {
       padding: 1.25rem 1.15rem;
+      text-align: center;
     }
-    .lodging-booked-body .lodging-detail {
-      display: flex; align-items: baseline; gap: 0.4rem;
-      font-size: 0.88rem; margin-bottom: 0.35rem;
+    .lodging-booked-status {
+      font-weight: 700; font-size: 1rem;
+      color: var(--green);
+      margin-bottom: 0.2rem;
     }
-    .lodging-booked-body .lodging-detail-label {
-      font-weight: 600; color: var(--forest);
-      font-size: 0.75rem; text-transform: uppercase;
-      letter-spacing: 0.03em;
-      min-width: 4rem;
-    }
-    .lodging-booked-body .lodging-detail-value {
-      color: var(--text);
+    .lodging-booked-nights {
+      font-size: 0.85rem; color: var(--text-light);
     }
 
     /* ── Footer ── */
@@ -443,7 +439,7 @@
       nav { gap: 0.8rem; padding: 0.6rem 1rem; }
       nav a { font-size: 0.75rem; }
       .hero { padding: 4rem 1rem 3rem; min-height: 90vh; }
-      .dest-cards { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+      .dest-cards { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 100%; }
       .dest-card .dest-name { font-size: 0.75rem; }
       .section-header { padding: 2rem 1rem 0; }
       .section-body { padding: 1rem 1rem 2.5rem; }
@@ -473,6 +469,7 @@
 
 <!-- Hero Section -->
 <section class="hero" id="hero">
+  <div class="hero-bg"></div>
   <div class="hero-content">
     <h1>Thailand 2026</h1>
     <div class="dates">April 12 &ndash; 25, 2026 &middot; 14 Days</div>
@@ -496,7 +493,7 @@
         <div class="dest-overlay"><span class="dest-name">Chiang Mai</span></div>
       </a>
       <a class="dest-card" href="#itinerary">
-        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=533&fit=crop&crop=center" alt="Mountain road in northern Thailand" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=533&fit=crop&crop=center" alt="Mountain road in northern Thailand" loading="lazy">
         <div class="dest-overlay"><span class="dest-name">Mae Hong Son Loop</span></div>
       </a>
       <a class="dest-card" href="#hero">
@@ -1003,11 +1000,8 @@
           <span class="lodging-dates">Apr 13 &ndash; 14</span>
         </div>
         <div class="lodging-booked-body">
-          <span class="lodging-booked-badge">Booked</span>
-          <div class="lodging-detail" style="margin-top:0.6rem">
-            <span class="lodging-detail-label">Stay</span>
-            <span class="lodging-detail-value">1 night &mdash; arrival</span>
-          </div>
+          <div class="lodging-booked-status">Booked</div>
+          <div class="lodging-booked-nights">1 night</div>
         </div>
       </div>
 
@@ -1018,11 +1012,8 @@
           <span class="lodging-dates">Apr 14 &ndash; 17</span>
         </div>
         <div class="lodging-booked-body">
-          <span class="lodging-booked-badge">Booked</span>
-          <div class="lodging-detail" style="margin-top:0.6rem">
-            <span class="lodging-detail-label">Stay</span>
-            <span class="lodging-detail-value">3 nights &mdash; beach days</span>
-          </div>
+          <div class="lodging-booked-status">Booked</div>
+          <div class="lodging-booked-nights">3 nights</div>
         </div>
       </div>
 
@@ -1033,11 +1024,8 @@
           <span class="lodging-dates">Apr 17 &ndash; 18</span>
         </div>
         <div class="lodging-booked-body">
-          <span class="lodging-booked-badge">Booked</span>
-          <div class="lodging-detail" style="margin-top:0.6rem">
-            <span class="lodging-detail-label">Stay</span>
-            <span class="lodging-detail-value">1 night &mdash; pre-loop</span>
-          </div>
+          <div class="lodging-booked-status">Booked</div>
+          <div class="lodging-booked-nights">1 night</div>
         </div>
       </div>
 
@@ -1087,11 +1075,8 @@
           <span class="lodging-dates">Apr 23 &ndash; 24</span>
         </div>
         <div class="lodging-booked-body">
-          <span class="lodging-booked-badge">Booked</span>
-          <div class="lodging-detail" style="margin-top:0.6rem">
-            <span class="lodging-detail-label">Stay</span>
-            <span class="lodging-detail-value">1 night &mdash; post-loop</span>
-          </div>
+          <div class="lodging-booked-status">Booked</div>
+          <div class="lodging-booked-nights">1 night</div>
         </div>
       </div>
 
@@ -1102,11 +1087,8 @@
           <span class="lodging-dates">Apr 24 &ndash; 25</span>
         </div>
         <div class="lodging-booked-body">
-          <span class="lodging-booked-badge">Booked</span>
-          <div class="lodging-detail" style="margin-top:0.6rem">
-            <span class="lodging-detail-label">Stay</span>
-            <span class="lodging-detail-value">1 night &mdash; departure</span>
-          </div>
+          <div class="lodging-booked-status">Booked</div>
+          <div class="lodging-booked-nights">1 night</div>
         </div>
       </div>
 
